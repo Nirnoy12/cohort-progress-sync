@@ -1,7 +1,9 @@
 import Papa from "papaparse";
 import { LabData } from "@/types/lab-data";
 
-const CSV_URL = "https://raw.githubusercontent.com/nirnoy112/Google-Cohort-Lab-Progress-Tracker/main/data/lab_data.csv";
+// Use local CSV for demo, or change to your GitHub URL
+const CSV_URL = "/data/lab_data.csv";
+// For production, use: "https://raw.githubusercontent.com/<username>/<repo>/main/data/lab_data.csv"
 
 export const fetchLabData = async (): Promise<LabData[]> => {
   try {
