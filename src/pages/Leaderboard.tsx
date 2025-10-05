@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Trophy, Search, BarChart3, Loader2, AlertCircle, Home } from "lucide-react";
+import GDGLogo from "@/components/GDGLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -81,9 +82,9 @@ const Leaderboard = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Trophy className="h-8 w-8 text-primary" />
+              <GDGLogo className="h-10 w-10" />
               <div>
-                <h1 className="text-xl font-bold">Leaderboard</h1>
+                <h1 className="text-xl font-bold font-google">Leaderboard</h1>
                 <p className="text-xs text-muted-foreground">Google Cohort Progress</p>
               </div>
             </div>

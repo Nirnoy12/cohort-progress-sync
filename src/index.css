@@ -17,11 +17,24 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 13%;
 
+    /* Google Blue */
     --primary: 217 89% 61%;
     --primary-foreground: 0 0% 100%;
     
     --primary-light: 217 89% 75%;
     --primary-dark: 217 89% 45%;
+    
+    /* Google Red */
+    --gdg-red: 4 90% 58%;
+    --gdg-red-foreground: 0 0% 100%;
+    
+    /* Google Yellow */
+    --gdg-yellow: 43 96% 56%;
+    --gdg-yellow-foreground: 0 0% 13%;
+    
+    /* Google Green */
+    --gdg-green: 142 71% 45%;
+    --gdg-green-foreground: 0 0% 100%;
 
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 13%;
@@ -29,10 +42,10 @@ All colors MUST be HSL.
     --muted: 220 14% 96%;
     --muted-foreground: 220 9% 46%;
 
-    --accent: 217 89% 61%;
+    --accent: 4 90% 58%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 4 90% 58%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 13% 91%;
@@ -44,10 +57,10 @@ All colors MUST be HSL.
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
     
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 43 96% 56%;
+    --warning-foreground: 0 0% 13%;
     
-    --gold: 45 100% 51%;
+    --gold: 43 96% 56%;
     --silver: 0 0% 75%;
     --bronze: 25 75% 47%;
     
@@ -58,7 +71,11 @@ All colors MUST be HSL.
     
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
-    --gradient-primary: linear-gradient(135deg, hsl(217 89% 61%), hsl(217 89% 75%));
+    /* GDG Multi-color Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217 89% 61%), hsl(142 71% 45%));
+    --gradient-gdg: linear-gradient(135deg, hsl(217 89% 61%), hsl(4 90% 58%), hsl(43 96% 56%), hsl(142 71% 45%));
+    --gradient-gdg-blue-red: linear-gradient(135deg, hsl(217 89% 61%), hsl(4 90% 58%));
+    --gradient-gdg-yellow-green: linear-gradient(135deg, hsl(43 96% 56%), hsl(142 71% 45%));
     --gradient-success: linear-gradient(135deg, hsl(142 71% 45%), hsl(142 71% 60%));
 
     --sidebar-background: 0 0% 98%;
@@ -93,6 +110,15 @@ All colors MUST be HSL.
     
     --primary-light: 217 89% 75%;
     --primary-dark: 217 89% 45%;
+    
+    --gdg-red: 4 90% 58%;
+    --gdg-red-foreground: 0 0% 100%;
+    
+    --gdg-yellow: 43 96% 56%;
+    --gdg-yellow-foreground: 0 0% 13%;
+    
+    --gdg-green: 142 71% 45%;
+    --gdg-green-foreground: 0 0% 100%;
 
     --secondary: 220 15% 18%;
     --secondary-foreground: 0 0% 98%;
@@ -100,10 +126,10 @@ All colors MUST be HSL.
     --muted: 220 15% 18%;
     --muted-foreground: 220 9% 65%;
 
-    --accent: 217 89% 61%;
+    --accent: 4 90% 58%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 63% 40%;
+    --destructive: 4 90% 58%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 220 15% 20%;
@@ -113,8 +139,8 @@ All colors MUST be HSL.
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
     
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 43 96% 56%;
+    --warning-foreground: 0 0% 13%;
     
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -146,6 +172,18 @@ All colors MUST be HSL.
     background: var(--gradient-primary);
   }
   
+  .gradient-gdg {
+    background: var(--gradient-gdg);
+  }
+  
+  .gradient-gdg-blue-red {
+    background: var(--gradient-gdg-blue-red);
+  }
+  
+  .gradient-gdg-yellow-green {
+    background: var(--gradient-gdg-yellow-green);
+  }
+  
   .gradient-success {
     background: var(--gradient-success);
   }
@@ -156,5 +194,12 @@ All colors MUST be HSL.
   
   .transition-smooth {
     transition: var(--transition);
+  }
+  
+  .text-gdg-gradient {
+    background: var(--gradient-gdg);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }

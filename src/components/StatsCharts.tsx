@@ -6,7 +6,7 @@ interface StatsChartsProps {
   data: LabDataWithRank[];
 }
 
-const COLORS = ["hsl(217, 89%, 61%)", "hsl(142, 71%, 45%)", "hsl(38, 92%, 50%)", "hsl(0, 84%, 60%)"];
+const COLORS = ["hsl(217, 89%, 61%)", "hsl(4, 90%, 58%)", "hsl(43, 96%, 56%)", "hsl(142, 71%, 45%)"];
 
 const StatsCharts = ({ data }: StatsChartsProps) => {
   // Prepare data for bar chart
@@ -93,7 +93,11 @@ const StatsCharts = ({ data }: StatsChartsProps) => {
                     borderRadius: "8px"
                   }}
                 />
-                <Bar dataKey="completed" fill="hsl(217, 89%, 61%)" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="completed" fill="hsl(217, 89%, 61%)" radius={[8, 8, 0, 0]}>
+                  {barData.map((entry, index) => (
+                    <rect key={`bar-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

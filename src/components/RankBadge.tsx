@@ -8,9 +8,9 @@ const RankBadge = ({ rank }: RankBadgeProps) => {
   if (rank > 3) return <span className="text-muted-foreground font-medium">#{rank}</span>;
 
   const colors = {
-    1: { bg: "bg-gold/10", text: "text-gold", border: "border-gold/20" },
-    2: { bg: "bg-silver/10", text: "text-silver", border: "border-silver/20" },
-    3: { bg: "bg-bronze/10", text: "text-bronze", border: "border-bronze/20" },
+    1: { bg: "bg-gdg-yellow/20", text: "text-gdg-yellow", border: "border-gdg-yellow/40" },
+    2: { bg: "bg-gdg-blue/20", text: "text-gdg-blue", border: "border-gdg-blue/40" },
+    3: { bg: "bg-gdg-green/20", text: "text-gdg-green", border: "border-gdg-green/40" },
   };
 
   const color = colors[rank as keyof typeof colors];

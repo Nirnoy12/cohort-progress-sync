@@ -14,7 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Roboto', 'system-ui', 'sans-serif'],
+        google: ['Google Sans', 'Roboto', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -27,6 +28,16 @@ export default {
           foreground: "hsl(var(--primary-foreground))",
           light: "hsl(var(--primary-light))",
           dark: "hsl(var(--primary-dark))",
+        },
+        gdg: {
+          red: "hsl(var(--gdg-red))",
+          'red-foreground': "hsl(var(--gdg-red-foreground))",
+          yellow: "hsl(var(--gdg-yellow))",
+          'yellow-foreground': "hsl(var(--gdg-yellow-foreground))",
+          green: "hsl(var(--gdg-green))",
+          'green-foreground': "hsl(var(--gdg-green-foreground))",
+          blue: "hsl(var(--primary))",
+          'blue-foreground': "hsl(var(--primary-foreground))",
         },
         success: {
           DEFAULT: "hsl(var(--success))",

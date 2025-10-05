@@ -12,10 +12,10 @@ const ProgressBar = ({ percentage, showLabel = true, size = "md" }: ProgressBarP
   };
 
   const getColorClass = (pct: number) => {
-    if (pct === 100) return "bg-success";
-    if (pct >= 75) return "bg-primary";
-    if (pct >= 50) return "bg-warning";
-    return "bg-muted-foreground";
+    if (pct === 100) return "bg-gdg-green";
+    if (pct >= 75) return "bg-gdg-blue";
+    if (pct >= 50) return "bg-gdg-yellow";
+    return "bg-gdg-red";
   };
 
   return (
