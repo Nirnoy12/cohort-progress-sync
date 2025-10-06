@@ -3,8 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Trophy, Target, TrendingUp } from "lucide-react";
 import mckvLogo from "../../public/MCKVIE.png";
 import gdgLogo from "../../public/LOGO.png";
+import { useLeaderboardStore } from "@/utils/csv-fetcher";
 
 const Home = () => {
+  const { data } = useLeaderboardStore();
+
+  const totalStudents = data?.length;
+  const fullCompleted = data.filter(
+    (item) => item.Labs_Completed === 19 // ✅ total labs hardcoded
+  ).length;
+
   const words = [
     { text: "Google ", color: "text-gdg-blue" },
     { text: "Cloud ", color: "text-gdg-red" },
@@ -81,7 +89,7 @@ const Home = () => {
               {/* Card 1 */}
               <div className="w-full sm:w-[300px] md:w-[340px] lg:w-[380px] h-[130px] sm:h-[180px] bg-card border-2 border-gdg-blue rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg hover:border-gdg-blue/60 transition-all duration-300 text-center flex flex-col items-center justify-center space-y-3 cursor-pointer">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gdg-blue/10 flex items-center justify-center text-gdg-blue text-xl sm:text-2xl font-bold">
-                  20
+                  {fullCompleted}
                 </div>
                 <h3 className="font-semibold text-base sm:text-lg font-google text-foreground">
                   Eligible Participants
@@ -91,7 +99,7 @@ const Home = () => {
               {/* Card 2 */}
               <div className="w-full sm:w-[300px] md:w-[340px] lg:w-[380px] h-[130px] sm:h-[180px] bg-card border-2 border-gdg-yellow rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg hover:border-gdg-yellow/60 transition-all duration-300 text-center flex flex-col items-center justify-center space-y-3 cursor-pointer">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gdg-yellow/10 flex items-center justify-center text-gdg-yellow text-xl sm:text-2xl font-bold">
-                  168
+                  {totalStudents}
                 </div>
                 <h3 className="font-semibold text-base sm:text-lg font-google text-foreground">
                   Participants Registered

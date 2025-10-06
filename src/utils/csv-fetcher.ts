@@ -1,42 +1,106 @@
-import Papa from "papaparse";
-import { LabData } from "@/types/lab-data";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { create } from "zustand";
 
-// Use local CSV for demo, or change to your GitHub URL
-const CSV_URL = "/data/lab_data.csv";
-// For production, use: "https://raw.githubusercontent.com/<username>/<repo>/main/data/lab_data.csv"
+// --- Store state type ---
+interface LeaderboardState {
+  data: LabDataWithRank[];
+  loading: boolean;
+  error: string | null;
+  fetchLeaderboard: () => Promise<void>;
+}
 
-export const fetchLabData = async (): Promise<LabData[]> => {
-  try {
-    const response = await fetch(CSV_URL);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch CSV: ${response.statusText}`);
-    }
+// --- Constants ---
+const API_KEY = "AIzaSyBscgVdttfCp4hpvqLgTYHmNCxHB83cRQQ";
+const SPREADSHEET_ID = "1UL2OK8oolWeehcs799ofOwxWciSJ5D0xyGuUxAhE1wI";
+const SHEET_NAME = " [06 Oct]";
+const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-    const csvText = await response.text();
-    
-    return new Promise((resolve, reject) => {
-      Papa.parse(csvText, {
-        header: true,
-        skipEmptyLines: true,
-        dynamicTyping: true,
-        complete: (results) => {
-          const data = results.data as LabData[];
-          // Ensure percentage is calculated if not present
-          const processedData = data.map(row => ({
-            ...row,
-            Completion_Percentage: row.Completion_Percentage || 
-              (row.Total_Labs > 0 ? (row.Labs_Completed / row.Total_Labs) * 100 : 0)
-          }));
-          resolve(processedData);
-        },
-        error: (error) => {
-          reject(new Error(`CSV parsing error: ${error.message}`));
-        },
-      });
-    });
-  } catch (error) {
-    console.error("Error fetching lab data:", error);
-    throw error;
+// --- Fetch data from Google Sheets ---
+async function fetchLeaderboardData(): Promise<string[][]> {
+  const sheetNameEncoded = encodeURIComponent(SHEET_NAME);
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${sheetNameEncoded}?key=${API_KEY}`;
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
-};
+
+  const data = await response.json();
+  // console.log("data = ", data.values);
+  return data.values;
+}
+
+// --- Process the raw sheet data ---
+function processData(rawData: string[][]): LabDataWithRank[] {
+  if (!rawData || rawData.length < 2) return [];
+  // console.log("rawData = ", rawData[0]);
+  const headers = rawData[0].map((h) => h.toLowerCase());
+  const nameIdx = headers.findIndex((h) => h.includes("user name"));
+  const emailIdx = headers.findIndex((h) => h.includes("user email"));
+  const labsIdx = headers.findIndex((h) =>
+    h.includes("no of skill badges completed")
+  );
+  
+
+  // console.log("idx = \n lab = ", nameIdx,labsIdx);
+
+  if (nameIdx === -1 || labsIdx === -1) {
+    console.error("Required columns not found");
+    return [];
+  }
+
+  const TOTAL_LABS = 19; // ✅ Hardcoded total
+
+  const processed: LabDataWithRank[] = rawData
+    .slice(1)
+    .map((row) => {
+      const labsCompleted = parseInt(row[labsIdx]) || 0;
+      const completionPercentage = (labsCompleted / TOTAL_LABS) * 100;
+
+      return {
+        Name: row[nameIdx] || "",
+        Email: row[emailIdx] || "",
+        Labs_Completed: labsCompleted,
+        Total_Labs: TOTAL_LABS,
+        Completion_Percentage: parseFloat(completionPercentage.toFixed(2)), // ✅ round to 2 decimals
+        rank: 0,
+      };
+    })
+    .filter((item) => item.Name)
+    .sort((a, b) => b.Completion_Percentage - a.Completion_Percentage)
+    .map((item, i) => ({ ...item, rank: i + 1 }));
+
+  return processed;
+}
+
+// --- Zustand Store ---
+export const useLeaderboardStore = create<LeaderboardState>((set) => ({
+  data: [],
+  loading: false,
+  error: null,
+
+  fetchLeaderboard: async () => {
+    set({ loading: true, error: null });
+    try {
+      const rawData = await fetchLeaderboardData();
+      const processed = processData(rawData);
+      set({ data: processed, loading: false });
+    } catch (error: any) {
+      set({ error: error.message || "Failed to fetch data", loading: false });
+    }
+  },
+}));
+
+// --- Optional Auto Refresh Hook ---
+import React from "react";
+import { LabDataWithRank } from "@/types/lab-data";
+
+export function useAutoRefreshLeaderboard() {
+  const fetchLeaderboard = useLeaderboardStore((s) => s.fetchLeaderboard);
+
+  React.useEffect(() => {
+    fetchLeaderboard(); // initial load
+    const interval = setInterval(fetchLeaderboard, REFRESH_INTERVAL);
+    return () => clearInterval(interval);
+  }, [fetchLeaderboard]);
+}

@@ -15,26 +15,27 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LeaderboardTable from "@/components/LeaderboardTable";
 import StatsCharts from "@/components/StatsCharts";
-import { fetchLabData } from "@/utils/csv-fetcher";
 import { LabDataWithRank } from "@/types/lab-data";
 import { useToast } from "@/hooks/use-toast";
+import {
+  useAutoRefreshLeaderboard,
+  useLeaderboardStore,
+} from "@/utils/csv-fetcher";
 import mckvLogo from "../../public/MCKVIE.png";
 import gdgLogo from "../../public/LOGO.png";
 
 const Leaderboard = () => {
-  const [data, setData] = useState<LabDataWithRank[]>([]);
   const [filteredData, setFilteredData] = useState<LabDataWithRank[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showCharts, setShowCharts] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  const { data, loading, error, fetchLeaderboard } = useLeaderboardStore();
+  useAutoRefreshLeaderboard();
 
+  // 🔍 Filter when data or query changes
   useEffect(() => {
+    if (!data) return;
     if (searchQuery.trim() === "") {
       setFilteredData(data);
     } else {
@@ -48,42 +49,15 @@ const Leaderboard = () => {
     }
   }, [searchQuery, data]);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const rawData = await fetchLabData();
-
-      // Sort by completion percentage and assign ranks
-      const sorted = [...rawData].sort(
-        (a, b) => b.Completion_Percentage - a.Completion_Percentage
-      );
-
-      const withRanks: LabDataWithRank[] = sorted.map((item, index) => ({
-        ...item,
-        rank: index + 1,
-      }));
-
-      setData(withRanks);
-      setFilteredData(withRanks);
-
+  // 🎉 Toast when new data is fetched
+  useEffect(() => {
+    if (data.length > 0) {
       toast({
-        title: "Data loaded successfully",
-        description: `Loaded ${withRanks.length} participants`,
+        title: "Leaderboard Updated",
+        description: `Loaded ${data.length} participants`,
       });
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to load data";
-      setError(errorMessage);
-      toast({
-        title: "Error loading data",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [data, toast]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
@@ -92,18 +66,18 @@ const Leaderboard = () => {
         <div className="container mx-auto px-4 ">
           <div className="flex items-center justify-between">
             {/* Logos Section */}
-            <div className="flex items-center justify-center flex-nowrap">
-              <img
-                src={mckvLogo}
-                alt="MCKV Logo"
-                className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
-              />
-              <img
-                src={gdgLogo}
-                alt="GDG Logo"
-                className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
-              />
-            </div>
+          <div className="flex items-center justify-center flex-nowrap">
+            <img
+              src={mckvLogo}
+              alt="MCKV Logo"
+              className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+            />
+            <img
+              src={gdgLogo}
+              alt="GDG Logo"
+              className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+            />
+          </div>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -149,7 +123,7 @@ const Leaderboard = () => {
             </CardContent>
           </Card>
 
-          {/* Loading State */}
+          {/* Loading */}
           {loading && (
             <div className="flex items-center justify-center py-12">
               <div className="text-center space-y-4">
@@ -161,30 +135,30 @@ const Leaderboard = () => {
             </div>
           )}
 
-          {/* Error State */}
+          {/* Error */}
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription className="flex items-center justify-between">
                 <span>{error}</span>
-                <Button variant="outline" size="sm" onClick={loadData}>
+                <Button variant="outline" size="sm" onClick={fetchLeaderboard}>
                   Retry
                 </Button>
               </AlertDescription>
             </Alert>
           )}
 
-          {/* Stats Charts */}
+          {/* Stats */}
           {!loading && !error && showCharts && data.length > 0 && (
             <StatsCharts data={data} />
           )}
 
-          {/* Leaderboard Table */}
+          {/* Leaderboard */}
           {!loading && !error && filteredData.length > 0 && (
             <LeaderboardTable data={filteredData} />
           )}
 
-          {/* Empty State */}
+          {/* No results */}
           {!loading &&
             !error &&
             filteredData.length === 0 &&
@@ -205,7 +179,7 @@ const Leaderboard = () => {
       </main>
 
       {/* Footer */}
-<footer className="border-t bg-card">
+      <footer className="border-t bg-card">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
           Built for GDG MCKVIE | © 2025 MCKVIE AI-ML Dept.
         </div>
