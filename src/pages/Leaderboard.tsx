@@ -31,7 +31,6 @@ const Leaderboard = () => {
   const { data, loading, error, fetchLeaderboard } = useLeaderboardStore();
   // useAutoRefreshLeaderboard();
 
-
   // 🔍 Filter when data or query changes
   useEffect(() => {
     if (!data) return;
@@ -63,9 +62,9 @@ const Leaderboard = () => {
       {/* Header */}
       <header className="border-b bg-card shadow-sm sticky top-0 z-10">
         <div className="container mx-auto px-2 ">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between px-2">
             {/* Logos Section */}
-            <div className="flex items-center justify-around flex-nowrap">
+            <div className="flex items-center justify-center flex-nowrap">
               <img
                 src="/MCKVIE.png"
                 alt="MCKV Logo"
@@ -78,17 +77,17 @@ const Leaderboard = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Button
+              {/* <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowCharts(!showCharts)}
               >
-                <BarChart3 className="h-4 w-4 mr-2" />
+                <BarChart3 className="h-4" />
                 {showCharts ? "Hide" : "Show"} Stats
-              </Button>
+              </Button> */}
               <Link to="/">
-                <Button variant="ghost" size="sm">
-                  <Home className="h-4 w-4 mr-2" />
+                <Button variant="ghost" size="lg" className="border-gdg-red text-gdg-red border">
+                  <Home className="h-7 w-4 mr-2" />
                   Home
                 </Button>
               </Link>
