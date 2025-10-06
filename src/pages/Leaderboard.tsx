@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Trophy, Search, BarChart3, Loader2, AlertCircle, Home } from "lucide-react";
+import {
+  Trophy,
+  Search,
+  BarChart3,
+  Loader2,
+  AlertCircle,
+  Home,
+} from "lucide-react";
 import GDGLogo from "@/components/GDGLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +18,8 @@ import StatsCharts from "@/components/StatsCharts";
 import { fetchLabData } from "@/utils/csv-fetcher";
 import { LabDataWithRank } from "@/types/lab-data";
 import { useToast } from "@/hooks/use-toast";
+import mckvLogo from "../../public/MCKVIE.png";
+import gdgLogo from "../../public/LOGO.png";
 
 const Leaderboard = () => {
   const [data, setData] = useState<LabDataWithRank[]>([]);
@@ -44,26 +53,27 @@ const Leaderboard = () => {
       setLoading(true);
       setError(null);
       const rawData = await fetchLabData();
-      
+
       // Sort by completion percentage and assign ranks
       const sorted = [...rawData].sort(
         (a, b) => b.Completion_Percentage - a.Completion_Percentage
       );
-      
+
       const withRanks: LabDataWithRank[] = sorted.map((item, index) => ({
         ...item,
         rank: index + 1,
       }));
-      
+
       setData(withRanks);
       setFilteredData(withRanks);
-      
+
       toast({
         title: "Data loaded successfully",
         description: `Loaded ${withRanks.length} participants`,
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to load data";
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load data";
       setError(errorMessage);
       toast({
         title: "Error loading data",
@@ -79,14 +89,20 @@ const Leaderboard = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
       <header className="border-b bg-card shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 ">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <GDGLogo className="h-10 w-10" />
-              <div>
-                <h1 className="text-xl font-bold font-google">Leaderboard</h1>
-                <p className="text-xs text-muted-foreground">Google Cohort Progress</p>
-              </div>
+            {/* Logos Section */}
+            <div className="flex items-center justify-center flex-nowrap">
+              <img
+                src={mckvLogo}
+                alt="MCKV Logo"
+                className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+              />
+              <img
+                src={gdgLogo}
+                alt="GDG Logo"
+                className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+              />
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -126,7 +142,8 @@ const Leaderboard = () => {
               </div>
               {searchQuery && (
                 <p className="text-sm text-muted-foreground mt-2">
-                  Found {filteredData.length} result{filteredData.length !== 1 ? "s" : ""}
+                  Found {filteredData.length} result
+                  {filteredData.length !== 1 ? "s" : ""}
                 </p>
               )}
             </CardContent>
@@ -137,7 +154,9 @@ const Leaderboard = () => {
             <div className="flex items-center justify-center py-12">
               <div className="text-center space-y-4">
                 <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-                <p className="text-muted-foreground">Loading leaderboard data...</p>
+                <p className="text-muted-foreground">
+                  Loading leaderboard data...
+                </p>
               </div>
             </div>
           )}
@@ -166,24 +185,29 @@ const Leaderboard = () => {
           )}
 
           {/* Empty State */}
-          {!loading && !error && filteredData.length === 0 && data.length > 0 && (
-            <Card className="shadow-material">
-              <CardContent className="py-12 text-center">
-                <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No results found</h3>
-                <p className="text-muted-foreground">
-                  Try adjusting your search query
-                </p>
-              </CardContent>
-            </Card>
-          )}
+          {!loading &&
+            !error &&
+            filteredData.length === 0 &&
+            data.length > 0 && (
+              <Card className="shadow-material">
+                <CardContent className="py-12 text-center">
+                  <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">
+                    No results found
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Try adjusting your search query
+                  </p>
+                </CardContent>
+              </Card>
+            )}
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t bg-card mt-auto">
+<footer className="border-t bg-card">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          Built for Google Cohort Progress Tracking | © 2025 MCKVIE AI-ML Dept.
+          Built for GDG MCKVIE | © 2025 MCKVIE AI-ML Dept.
         </div>
       </footer>
     </div>

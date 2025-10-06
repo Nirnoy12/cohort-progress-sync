@@ -1,20 +1,40 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Trophy, Target, TrendingUp } from "lucide-react";
-import GDGLogo from "@/components/GDGLogo";
+import mckvLogo from "../../public/MCKVIE.png";
+import gdgLogo from "../../public/LOGO.png";
 
 const Home = () => {
+  const words = [
+    { text: "Google ", color: "text-gdg-blue" },
+    { text: "Cloud ", color: "text-gdg-red" },
+    { text: "Study ", color: "text-gdg-yellow" },
+    { text: "Jam", color: "text-gdg-green" },
+  ];
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="border-b bg-card shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <GDGLogo className="h-10 w-10" />
-            <h1 className="text-xl font-bold font-google">Google Cohort Tracker</h1>
+        <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 sm:gap-8">
+          {/* Logos Section */}
+          <div className="flex items-center justify-center flex-nowrap">
+            <img
+              src={mckvLogo}
+              alt="MCKV Logo"
+              className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+            />
+            <img
+              src={gdgLogo}
+              alt="GDG Logo"
+              className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+            />
           </div>
+
+          {/* Button */}
           <Link to="/leaderboard">
-            <Button className="gradient-gdg border-0">View Leaderboard</Button>
+            <Button className="bg-transparent border-2 border-gdg-red  hover:bg-gdg-red text-gdg-red hover:text-white font-semibold rounded-xl transition-all duration-300 text-sm sm:text-base md:text-md px-4 py-1.5 sm:px-5 sm:py-2.5 md:px-7 md:py-3 shadow-lg hover:shadow-xl transition-smooth">
+              View Leaderboard
+            </Button>
           </Link>
         </div>
       </header>
@@ -23,27 +43,33 @@ const Home = () => {
       <main className="flex-1 flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-4xl mx-auto text-center space-y-8">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
-              <Target className="h-4 w-4" />
-              Real-time Progress Tracking
-            </div>
-            
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight font-google">
-              Google Cohort
+            <h1 className="text-3xl md:text-6xl lg:text-7xl font-bold leading-tight font-google">
+              <span className="text-xl md:text-4xl lg:text-5xl">
+                Welcome to
+              </span>
               <br />
-              <span className="text-gdg-gradient">
-                Lab Progress Tracker
+              {words.map(({ text, color }) => (
+                <span key={text} className={color}>
+                  {text}
+                </span>
+              ))}
+              <br />
+              <span className="text-xl md:text-4xl lg:text-5xl">
+                GDG oncampus MCKVIE
               </span>
             </h1>
-            
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Track your cohort's progress and leaderboard in real time. 
-              See how you stack up against your peers and celebrate every milestone.
+
+            <p className="text-md md:text-xl text-muted-foreground max-w-2xl mx-auto">
+              Track your cohort's progress and leaderboard in real time. See how
+              you stack up against your peers and celebrate every milestone.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
               <Link to="/leaderboard">
-                <Button size="lg" className="gradient-gdg shadow-lg hover:shadow-xl transition-smooth text-lg px-8 border-0">
+                <Button
+                  size="lg"
+                  className="bg-transparent border border-gdg-green hover:bg-gdg-green text-gdg-green hover:text-white shadow-lg hover:shadow-xl transition-smooth text-lg px-8"
+                >
                   View Leaderboard
                   <TrendingUp className="ml-2 h-5 w-5" />
                 </Button>
@@ -51,35 +77,25 @@ const Home = () => {
             </div>
 
             {/* Feature Cards */}
-            <div className="grid md:grid-cols-3 gap-6 pt-12">
-              <div className="bg-card border-2 border-gdg-blue/20 rounded-xl p-6 shadow-material hover:shadow-lg hover:border-gdg-blue/40 transition-smooth">
-                <div className="gradient-gdg-blue-red w-12 h-12 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <Trophy className="h-6 w-6 text-white" />
+            <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-6 pt-10 px-4 sm:px-8">
+              {/* Card 1 */}
+              <div className="w-full sm:w-[300px] md:w-[340px] lg:w-[380px] h-[130px] sm:h-[180px] bg-card border-2 border-gdg-blue rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg hover:border-gdg-blue/60 transition-all duration-300 text-center flex flex-col items-center justify-center space-y-3 cursor-pointer">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gdg-blue/10 flex items-center justify-center text-gdg-blue text-xl sm:text-2xl font-bold">
+                  20
                 </div>
-                <h3 className="font-semibold text-lg mb-2 font-google">Live Rankings</h3>
-                <p className="text-muted-foreground text-sm">
-                  See real-time rankings and celebrate top performers with badges
-                </p>
+                <h3 className="font-semibold text-base sm:text-lg font-google text-foreground">
+                  Eligible Participants
+                </h3>
               </div>
 
-              <div className="bg-card border-2 border-gdg-green/20 rounded-xl p-6 shadow-material hover:shadow-lg hover:border-gdg-green/40 transition-smooth">
-                <div className="gradient-gdg-yellow-green w-12 h-12 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <Target className="h-6 w-6 text-white" />
+              {/* Card 2 */}
+              <div className="w-full sm:w-[300px] md:w-[340px] lg:w-[380px] h-[130px] sm:h-[180px] bg-card border-2 border-gdg-yellow rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg hover:border-gdg-yellow/60 transition-all duration-300 text-center flex flex-col items-center justify-center space-y-3 cursor-pointer">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gdg-yellow/10 flex items-center justify-center text-gdg-yellow text-xl sm:text-2xl font-bold">
+                  168
                 </div>
-                <h3 className="font-semibold text-lg mb-2 font-google">Progress Tracking</h3>
-                <p className="text-muted-foreground text-sm">
-                  Visual progress bars show completion status at a glance
-                </p>
-              </div>
-
-              <div className="bg-card border-2 border-gdg-red/20 rounded-xl p-6 shadow-material hover:shadow-lg hover:border-gdg-red/40 transition-smooth">
-                <div className="bg-gdg-red w-12 h-12 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <TrendingUp className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2 font-google">Analytics</h3>
-                <p className="text-muted-foreground text-sm">
-                  Comprehensive charts and statistics for the entire cohort
-                </p>
+                <h3 className="font-semibold text-base sm:text-lg font-google text-foreground">
+                  Participants Registered
+                </h3>
               </div>
             </div>
           </div>
@@ -89,7 +105,7 @@ const Home = () => {
       {/* Footer */}
       <footer className="border-t bg-card">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          Built for Google Cohort Progress Tracking | © 2025 MCKVIE AI-ML Dept.
+          Built for GDG MCKVIE | © 2025 MCKVIE AI-ML Dept.
         </div>
       </footer>
     </div>
