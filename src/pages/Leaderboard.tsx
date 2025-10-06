@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Trophy, Search, BarChart3, Loader2, AlertCircle, Home } from "lucide-react";
+import {
+  Trophy,
+  Search,
+  BarChart3,
+  Loader2,
+  AlertCircle,
+  Home,
+} from "lucide-react";
 import GDGLogo from "@/components/GDGLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,24 +15,25 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LeaderboardTable from "@/components/LeaderboardTable";
 import StatsCharts from "@/components/StatsCharts";
-import { fetchLabData } from "@/utils/csv-fetcher";
 import { LabDataWithRank } from "@/types/lab-data";
 import { useToast } from "@/hooks/use-toast";
+import {
+  useAutoRefreshLeaderboard,
+  useLeaderboardStore,
+} from "@/utils/csv-fetcher";
 
 const Leaderboard = () => {
-  const [data, setData] = useState<LabDataWithRank[]>([]);
   const [filteredData, setFilteredData] = useState<LabDataWithRank[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showCharts, setShowCharts] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  const { data, loading, error, fetchLeaderboard } = useLeaderboardStore();
+  useAutoRefreshLeaderboard();
 
+  // 🔍 Filter when data or query changes
   useEffect(() => {
+    if (!data) return;
     if (searchQuery.trim() === "") {
       setFilteredData(data);
     } else {
@@ -39,41 +47,15 @@ const Leaderboard = () => {
     }
   }, [searchQuery, data]);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const rawData = await fetchLabData();
-      
-      // Sort by completion percentage and assign ranks
-      const sorted = [...rawData].sort(
-        (a, b) => b.Completion_Percentage - a.Completion_Percentage
-      );
-      
-      const withRanks: LabDataWithRank[] = sorted.map((item, index) => ({
-        ...item,
-        rank: index + 1,
-      }));
-      
-      setData(withRanks);
-      setFilteredData(withRanks);
-      
+  // 🎉 Toast when new data is fetched
+  useEffect(() => {
+    if (data.length > 0) {
       toast({
-        title: "Data loaded successfully",
-        description: `Loaded ${withRanks.length} participants`,
+        title: "Leaderboard Updated",
+        description: `Loaded ${data.length} participants`,
       });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to load data";
-      setError(errorMessage);
-      toast({
-        title: "Error loading data",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [data, toast]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
@@ -85,7 +67,9 @@ const Leaderboard = () => {
               <GDGLogo className="h-10 w-10" />
               <div>
                 <h1 className="text-xl font-bold font-google">Leaderboard</h1>
-                <p className="text-xs text-muted-foreground">Google Cohort Progress</p>
+                <p className="text-xs text-muted-foreground">
+                  Google Cohort Progress
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -126,57 +110,65 @@ const Leaderboard = () => {
               </div>
               {searchQuery && (
                 <p className="text-sm text-muted-foreground mt-2">
-                  Found {filteredData.length} result{filteredData.length !== 1 ? "s" : ""}
+                  Found {filteredData.length} result
+                  {filteredData.length !== 1 ? "s" : ""}
                 </p>
               )}
             </CardContent>
           </Card>
 
-          {/* Loading State */}
+          {/* Loading */}
           {loading && (
             <div className="flex items-center justify-center py-12">
               <div className="text-center space-y-4">
                 <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-                <p className="text-muted-foreground">Loading leaderboard data...</p>
+                <p className="text-muted-foreground">
+                  Loading leaderboard data...
+                </p>
               </div>
             </div>
           )}
 
-          {/* Error State */}
+          {/* Error */}
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription className="flex items-center justify-between">
                 <span>{error}</span>
-                <Button variant="outline" size="sm" onClick={loadData}>
+                <Button variant="outline" size="sm" onClick={fetchLeaderboard}>
                   Retry
                 </Button>
               </AlertDescription>
             </Alert>
           )}
 
-          {/* Stats Charts */}
+          {/* Stats */}
           {!loading && !error && showCharts && data.length > 0 && (
             <StatsCharts data={data} />
           )}
 
-          {/* Leaderboard Table */}
+          {/* Leaderboard */}
           {!loading && !error && filteredData.length > 0 && (
             <LeaderboardTable data={filteredData} />
           )}
 
-          {/* Empty State */}
-          {!loading && !error && filteredData.length === 0 && data.length > 0 && (
-            <Card className="shadow-material">
-              <CardContent className="py-12 text-center">
-                <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No results found</h3>
-                <p className="text-muted-foreground">
-                  Try adjusting your search query
-                </p>
-              </CardContent>
-            </Card>
-          )}
+          {/* No results */}
+          {!loading &&
+            !error &&
+            filteredData.length === 0 &&
+            data.length > 0 && (
+              <Card className="shadow-material">
+                <CardContent className="py-12 text-center">
+                  <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">
+                    No results found
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Try adjusting your search query
+                  </p>
+                </CardContent>
+              </Card>
+            )}
         </div>
       </main>
 
