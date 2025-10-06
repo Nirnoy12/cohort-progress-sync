@@ -10,10 +10,9 @@ interface LeaderboardState {
 }
 
 // --- Constants ---
-// const API_KEY = "AIzaSyBscgVdttfCp4hpvqLgTYHmNCxHB83cRQQ";
-const API_KEY = "AIzaSyD2o3xN03sHHhQ9FM4xXTJvi2ue-WI8nWc";
+const API_KEY = "AIzaSyBscgVdttfCp4hpvqLgTYHmNCxHB83cRQQ";
 const SPREADSHEET_ID = "1UL2OK8oolWeehcs799ofOwxWciSJ5D0xyGuUxAhE1wI";
-const SHEET_NAME = "[06 Oct]";
+const SHEET_NAME = " [06 Oct]";
 const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 // --- Fetch data from Google Sheets ---
@@ -27,37 +26,46 @@ async function fetchLeaderboardData(): Promise<string[][]> {
   }
 
   const data = await response.json();
+  console.log("data = ", data.values);
   return data.values;
 }
 
 // --- Process the raw sheet data ---
 function processData(rawData: string[][]): LabDataWithRank[] {
   if (!rawData || rawData.length < 2) return [];
-
+  console.log("rawData = ", rawData[0]);
   const headers = rawData[0].map((h) => h.toLowerCase());
-  const nameIdx = headers.findIndex((h) => h.includes("name"));
-  const emailIdx = headers.findIndex((h) => h.includes("email"));
-  const labsIdx = headers.findIndex((h) => h.includes("labs completed"));
-  const totalIdx = headers.findIndex((h) => h.includes("total labs"));
-  const percentIdx = headers.findIndex((h) =>
-    h.includes("completion percentage")
+  const nameIdx = headers.findIndex((h) => h.includes("user name"));
+  const emailIdx = headers.findIndex((h) => h.includes("user email"));
+  const labsIdx = headers.findIndex((h) =>
+    h.includes("no of skill badges completed")
   );
+  
+
+  console.log("idx = \n lab = ", nameIdx,labsIdx);
 
   if (nameIdx === -1 || labsIdx === -1) {
     console.error("Required columns not found");
     return [];
   }
 
+  const TOTAL_LABS = 19; // ✅ Hardcoded total
+
   const processed: LabDataWithRank[] = rawData
     .slice(1)
-    .map((row) => ({
-      Name: row[nameIdx] || "",
-      Email: row[emailIdx] || "",
-      Labs_Completed: parseInt(row[labsIdx]) || 0,
-      Total_Labs: parseInt(row[totalIdx]) || 0,
-      Completion_Percentage: parseFloat(row[percentIdx]) || 0,
-      rank: 0, // will assign below
-    }))
+    .map((row) => {
+      const labsCompleted = parseInt(row[labsIdx]) || 0;
+      const completionPercentage = (labsCompleted / TOTAL_LABS) * 100;
+
+      return {
+        Name: row[nameIdx] || "",
+        Email: row[emailIdx] || "",
+        Labs_Completed: labsCompleted,
+        Total_Labs: TOTAL_LABS,
+        Completion_Percentage: parseFloat(completionPercentage.toFixed(2)), // ✅ round to 2 decimals
+        rank: 0,
+      };
+    })
     .filter((item) => item.Name)
     .sort((a, b) => b.Completion_Percentage - a.Completion_Percentage)
     .map((item, i) => ({ ...item, rank: i + 1 }));
