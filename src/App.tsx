@@ -6,10 +6,18 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Leaderboard from "./pages/Leaderboard";
 import NotFound from "./pages/NotFound";
+import { useLeaderboardStore } from "./utils/csv-fetcher";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => {
+  const fetchLeaderboard = useLeaderboardStore((s) => s.fetchLeaderboard);
+  
+    useEffect(() => {
+      fetchLeaderboard(); // ✅ only runs once
+    }, [fetchLeaderboard]);
+    
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>

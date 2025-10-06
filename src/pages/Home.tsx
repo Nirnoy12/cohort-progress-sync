@@ -1,11 +1,15 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Trophy, Target, TrendingUp } from "lucide-react";
-import mckvLogo from "../../public/MCKVIE.png";
-import gdgLogo from "../../public/LOGO.png";
-import { useLeaderboardStore } from "@/utils/csv-fetcher";
+import {
+  useAutoRefreshLeaderboard,
+  useLeaderboardStore,
+} from "@/utils/csv-fetcher";
+import { useEffect } from "react";
 
 const Home = () => {
+  
+
   const { data } = useLeaderboardStore();
 
   const totalStudents = data?.length;
@@ -27,12 +31,12 @@ const Home = () => {
           {/* Logos Section */}
           <div className="flex items-center justify-center flex-nowrap">
             <img
-              src={mckvLogo}
+              src="/MCKVIE.png"
               alt="MCKV Logo"
               className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
             />
             <img
-              src={gdgLogo}
+              src="/LOGO.png"
               alt="GDG Logo"
               className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
             />
@@ -87,22 +91,22 @@ const Home = () => {
             {/* Feature Cards */}
             <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-6 pt-10 px-4 sm:px-8">
               {/* Card 1 */}
-              <div className="w-full sm:w-[300px] md:w-[340px] lg:w-[380px] h-[130px] sm:h-[180px] bg-card border-2 border-gdg-blue rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg hover:border-gdg-blue/60 transition-all duration-300 text-center flex flex-col items-center justify-center space-y-3 cursor-pointer">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gdg-blue/10 flex items-center justify-center text-gdg-blue text-xl sm:text-2xl font-bold">
-                  {fullCompleted}
-                </div>
-                <h3 className="font-semibold text-base sm:text-lg font-google text-foreground">
-                  Eligible Participants
-                </h3>
-              </div>
 
-              {/* Card 2 */}
               <div className="w-full sm:w-[300px] md:w-[340px] lg:w-[380px] h-[130px] sm:h-[180px] bg-card border-2 border-gdg-yellow rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg hover:border-gdg-yellow/60 transition-all duration-300 text-center flex flex-col items-center justify-center space-y-3 cursor-pointer">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gdg-yellow/10 flex items-center justify-center text-gdg-yellow text-xl sm:text-2xl font-bold">
                   {totalStudents}
                 </div>
                 <h3 className="font-semibold text-base sm:text-lg font-google text-foreground">
                   Participants Registered
+                </h3>
+              </div>
+              {/* Card 2 */}
+              <div className="w-full sm:w-[300px] md:w-[340px] lg:w-[380px] h-[130px] sm:h-[180px] bg-card border-2 border-gdg-blue rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg hover:border-gdg-blue/60 transition-all duration-300 text-center flex flex-col items-center justify-center space-y-3 cursor-pointer">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gdg-blue/10 flex items-center justify-center text-gdg-blue text-xl sm:text-2xl font-bold">
+                  {fullCompleted}
+                </div>
+                <h3 className="font-semibold text-base sm:text-lg font-google text-foreground">
+                  Eligible Participants
                 </h3>
               </div>
             </div>

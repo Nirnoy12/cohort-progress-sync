@@ -21,8 +21,6 @@ import {
   useAutoRefreshLeaderboard,
   useLeaderboardStore,
 } from "@/utils/csv-fetcher";
-import mckvLogo from "../../public/MCKVIE.png";
-import gdgLogo from "../../public/LOGO.png";
 
 const Leaderboard = () => {
   const [filteredData, setFilteredData] = useState<LabDataWithRank[]>([]);
@@ -31,7 +29,8 @@ const Leaderboard = () => {
   const { toast } = useToast();
 
   const { data, loading, error, fetchLeaderboard } = useLeaderboardStore();
-  useAutoRefreshLeaderboard();
+  // useAutoRefreshLeaderboard();
+
 
   // 🔍 Filter when data or query changes
   useEffect(() => {
@@ -50,34 +49,34 @@ const Leaderboard = () => {
   }, [searchQuery, data]);
 
   // 🎉 Toast when new data is fetched
-  useEffect(() => {
-    if (data.length > 0) {
-      toast({
-        title: "Leaderboard Updated",
-        description: `Loaded ${data.length} participants`,
-      });
-    }
-  }, [data, toast]);
+  // useEffect(() => {
+  //   if (data.length > 0) {
+  //     toast({
+  //       title: "Leaderboard Updated",
+  //       description: `Loaded ${data.length} participants`,
+  //     });
+  //   }
+  // }, [data, toast]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
       <header className="border-b bg-card shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 ">
+        <div className="container mx-auto px-2 ">
           <div className="flex items-center justify-between">
             {/* Logos Section */}
-          <div className="flex items-center justify-center flex-nowrap">
-            <img
-              src={mckvLogo}
-              alt="MCKV Logo"
-              className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
-            />
-            <img
-              src={gdgLogo}
-              alt="GDG Logo"
-              className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
-            />
-          </div>
+            <div className="flex items-center justify-around flex-nowrap">
+              <img
+                src="/MCKVIE.png"
+                alt="MCKV Logo"
+                className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+              />
+              <img
+                src="/LOGO.png"
+                alt="GDG Logo"
+                className="h-14 w-auto sm:h-20 md:h-24 lg:h-28 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+              />
+            </div>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"

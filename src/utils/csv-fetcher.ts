@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 // --- Store state type ---
 interface LeaderboardState {
@@ -74,22 +75,33 @@ function processData(rawData: string[][]): LabDataWithRank[] {
 }
 
 // --- Zustand Store ---
-export const useLeaderboardStore = create<LeaderboardState>((set) => ({
-  data: [],
-  loading: false,
-  error: null,
+export const useLeaderboardStore = create<LeaderboardState>()(
+  persist(
+    (set) => ({
+      data: [],
+      loading: false,
+      error: null,
 
-  fetchLeaderboard: async () => {
-    set({ loading: true, error: null });
-    try {
-      const rawData = await fetchLeaderboardData();
-      const processed = processData(rawData);
-      set({ data: processed, loading: false });
-    } catch (error: any) {
-      set({ error: error.message || "Failed to fetch data", loading: false });
+      fetchLeaderboard: async () => {
+        set({ loading: true, error: null });
+        try {
+          const rawData = await fetchLeaderboardData();
+          const processed = processData(rawData);
+          set({ data: processed, loading: false });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to fetch data",
+            loading: false,
+          });
+        }
+      },
+    }),
+    {
+      name: "leaderboard-storage", // key name in localStorage
+      partialize: (state) => ({ data: state.data }), // store only data, not loading/error
     }
-  },
-}));
+  )
+);
 
 // --- Optional Auto Refresh Hook ---
 import React from "react";
